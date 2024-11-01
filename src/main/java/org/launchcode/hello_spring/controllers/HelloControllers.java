@@ -5,46 +5,53 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @ResponseBody
-@RequestMapping("hello")
 public class HelloControllers {
 
-    // Handles request at path /hello
-//    @GetMapping("hello")
-//    @ResponseBody
-//    public String hello() {
-//        return "Hello, Spring!";
-//    }
-
-    // lives /hello/goodbye
-    @GetMapping("goodbye")
-    public String goodbye() {
-        return "Goodbye, Spring!";
+    // Display the form on a GET request
+    @GetMapping("hello")
+    public String displayForm() {
+        return "<form action='/hello' method='post'>" +
+                    "<label for='name'>Name:</label>" +
+                    "<input type='text' id='name' name='name'>" +
+                    "<label for='language'>Choose language:</label>" +
+                    "<select name='language' id='language'>" +
+                        "<option value='English'>English</option>" +
+                        "<option value='French'>French</option>" +
+                        "<option value='Spanish'>Spanish</option>" +
+                        "<option value='German'>German</option>" +
+                        "<option value='Italian'>Italian</option>" +
+                    "</select>" +
+                    "<input type='submit' value='Greet me'>" +
+                "</form>";
     }
 
-    // lives /hello
-    // Handles request of the form /hello?name=LaunchCode
-    @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
-    public String helloWithQueryParam(@RequestParam String name) {
-        return  "Hello, " + name + "!";
+    // Process the form submission on a POST request
+    @PostMapping("hello")
+    public String processGreeting(@RequestParam String name, @RequestParam String language) {
+        if (name == null || name.isEmpty()) {
+            name = "World";
+        }
+        return "<h1>" + createMessage(name, language) + "</h1>";
     }
 
-    // lives /hello
-    // Handles requests of the form /hello/LaunchCode
-    @GetMapping("{name}")
-    public String helloWithPathParam(@PathVariable String name) {
-        return "Hello, " + name + "!";
-    }
+    // Static method to create a greeting message based on language
+    public static String createMessage(String name, String language) {
+        String greeting;
 
-    // lives /hello/form
-    @GetMapping("form")
-    public String helloForm() {
-        return "<html>" +
-                    "<body>" +
-                        "<form action='hello' method='post'>" +
-                             "<input type='text' name='name'>" +
-                            "<input type='submit' value='Greet me!'>" +
-                        "</form>" +
-                    "</body>" +
-                "</html>";
+        if (language.equals("English")) {
+            greeting = "Hello";
+        } else if (language.equals("French")) {
+            greeting = "Bonjour";
+        } else if (language.equals("Spanish")) {
+            greeting = "Hola";
+        } else if (language.equals("German")) {
+            greeting = "Guten Tag";
+        } else if (language.equals("Italian")) {
+            greeting = "Ciao";
+        } else {
+            greeting = "Hello";  // Default to English if no match
+        }
+
+        return greeting + ", " + name + "!";
     }
 }
